@@ -1,8 +1,10 @@
 # IAM Solution Architect Learning Hub
 
-A static learning website generated from an IAM Solution Architect roadmap workbook.
+A focused learning workspace for building IAM Solution Architect skills across identity, Zero Trust, IGA, PAM, and cloud IAM.
 
 Live site: [IAM Solution Architect Learning Hub](https://imtiyazali73.github.io/iam-solution-architect-learning-hub/)
+
+Owner mode: [IAM Solution Architect Learning Hub - Owner Sync](https://imtiyazali73.github.io/iam-solution-architect-learning-hub/?owner=1)
 
 ## What it includes
 
