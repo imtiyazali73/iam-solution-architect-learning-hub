@@ -224,6 +224,44 @@ main {
   color: #ffffff;
 }
 
+.featured-tool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+  padding: 20px;
+  border-left: 5px solid var(--green);
+}
+
+.featured-tool h2 {
+  margin-bottom: 8px;
+}
+
+.featured-tool p {
+  max-width: 820px;
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.featured-tool a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: var(--green);
+  color: #ffffff;
+  padding: 10px 14px;
+  font-weight: 850;
+}
+
+.featured-tool a:hover {
+  text-decoration: none;
+}
+
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -233,6 +271,7 @@ main {
 
 .metric,
 .sync-panel,
+.featured-tool,
 .focus-panel,
 .roadmap-panel,
 .resource-panel {
@@ -549,8 +588,14 @@ label {
   .hero-grid,
   .workspace-grid,
   .sync-panel,
+  .featured-tool,
   .metrics {
     grid-template-columns: 1fr;
+  }
+
+  .featured-tool {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .focus-panel {
