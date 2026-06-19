@@ -52,6 +52,8 @@ const prompts = [
 ];
 
 const storageKey = "iam-learning-hub-progress-v1";
+const syncSettingsKey = "iam-learning-hub-sync-v1";
+const syncFileName = "iam-learning-progress.json";
 let state = loadState();
 let selectedWeek = findFocusWeek().week;
 let timerSeconds = 25 * 60;
@@ -69,13 +71,129 @@ function loadState() {
 }
 
 function saveState() {
-  const compact = Object.fromEntries(
+  localStorage.setItem(storageKey, JSON.stringify(compactProgress()));
+}
+
+function compactProgress() {
+  return Object.fromEntries(
     state.map((item) => [
       item.week,
       { status: item.status, actualHours: Number(item.actualHours) || 0, notes: item.notes || "" }
     ])
   );
-  localStorage.setItem(storageKey, JSON.stringify(compact));
+}
+
+function loadSyncSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(syncSettingsKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveSyncSettings(settings) {
+  localStorage.setItem(syncSettingsKey, JSON.stringify(settings));
+}
+
+function renderSyncSettings() {
+  const settings = loadSyncSettings();
+  $("#githubToken").value = settings.token || "";
+  $("#gistId").value = settings.gistId || "";
+  setSyncStatus(settings.token ? "Connected locally. Pull or push when ready." : "Not connected");
+}
+
+function setSyncStatus(message, tone = "neutral") {
+  const status = $("#syncStatus");
+  status.textContent = message;
+  status.dataset.tone = tone;
+}
+
+function buildSyncPayload() {
+  return {
+    app: "IAM Solution Architect Learning Hub",
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    progress: compactProgress()
+  };
+}
+
+function applySyncedProgress(progress) {
+  if (!progress || typeof progress !== "object") {
+    throw new Error("Cloud file did not contain valid progress.");
+  }
+  localStorage.setItem(storageKey, JSON.stringify(progress));
+  state = loadState();
+  selectedWeek = findFocusWeek().week;
+  renderAll();
+}
+
+function githubHeaders(token) {
+  return {
+    "Accept": "application/vnd.github+json",
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+}
+
+async function githubRequest(path, options = {}) {
+  const settings = loadSyncSettings();
+  if (!settings.token) throw new Error("Add a GitHub token first.");
+  const response = await fetch(`https://api.github.com${path}`, {
+    ...options,
+    headers: { ...githubHeaders(settings.token), ...(options.headers || {}) }
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : {};
+  if (!response.ok) {
+    throw new Error(data.message || `GitHub API request failed with ${response.status}.`);
+  }
+  return data;
+}
+
+async function pushCloudProgress() {
+  const settings = loadSyncSettings();
+  if (!settings.token) throw new Error("Add a GitHub token first.");
+  const content = JSON.stringify(buildSyncPayload(), null, 2);
+  setSyncStatus("Pushing progress to cloud...");
+
+  if (!settings.gistId) {
+    const created = await githubRequest("/gists", {
+      method: "POST",
+      body: JSON.stringify({
+        description: "IAM Solution Architect Learning Hub progress",
+        public: false,
+        files: { [syncFileName]: { content } }
+      })
+    });
+    saveSyncSettings({ ...settings, gistId: created.id });
+    $("#gistId").value = created.id;
+    setSyncStatus(`Cloud sync ready. Gist ${created.id} created.`, "success");
+    return;
+  }
+
+  await githubRequest(`/gists/${settings.gistId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ files: { [syncFileName]: { content } } })
+  });
+  setSyncStatus(`Pushed at ${new Date().toLocaleTimeString()}.`, "success");
+}
+
+async function pullCloudProgress() {
+  const settings = loadSyncSettings();
+  if (!settings.token) throw new Error("Add a GitHub token first.");
+  if (!settings.gistId) throw new Error("Add a Gist ID or push once to create one.");
+  setSyncStatus("Pulling progress from cloud...");
+
+  const gist = await githubRequest(`/gists/${settings.gistId}`);
+  const file = gist.files?.[syncFileName];
+  if (!file) throw new Error(`The Gist does not contain ${syncFileName}.`);
+  const payload = file.truncated
+    ? await fetch(file.raw_url, { headers: githubHeaders(settings.token) }).then((response) => response.json())
+    : JSON.parse(file.content);
+
+  applySyncedProgress(payload.progress);
+  setSyncStatus(`Pulled cloud progress from ${new Date(payload.updatedAt || Date.now()).toLocaleString()}.`, "success");
 }
 
 function completionValue(status) {
@@ -261,6 +379,41 @@ function wireEvents() {
   $("#resourceSearch").addEventListener("input", renderResources);
   $("#newPrompt").addEventListener("click", renderPrompt);
   $("#exportProgress").addEventListener("click", exportProgress);
+  $("#saveSyncSettings").addEventListener("click", () => {
+    const token = $("#githubToken").value.trim();
+    const gistId = $("#gistId").value.trim();
+    if (!token) {
+      setSyncStatus("Enter a GitHub token with gist access.", "error");
+      return;
+    }
+    saveSyncSettings({ token, gistId });
+    setSyncStatus(gistId ? "Connected to existing Gist. Pull or push when ready." : "Connected. Push once to create a private Gist.", "success");
+  });
+  $("#clearSyncSettings").addEventListener("click", () => {
+    localStorage.removeItem(syncSettingsKey);
+    renderSyncSettings();
+  });
+  $("#pullCloud").addEventListener("click", async () => {
+    try {
+      await pullCloudProgress();
+    } catch (error) {
+      setSyncStatus(error.message, "error");
+    }
+  });
+  $("#pushCloud").addEventListener("click", async () => {
+    try {
+      await pushCloudProgress();
+    } catch (error) {
+      setSyncStatus(error.message, "error");
+    }
+  });
+  $("#syncNow").addEventListener("click", async () => {
+    try {
+      await pushCloudProgress();
+    } catch (error) {
+      setSyncStatus(error.message, "error");
+    }
+  });
   $("#resetProgress").addEventListener("click", () => {
     if (!confirm("Reset local roadmap progress?")) return;
     localStorage.removeItem(storageKey);
@@ -292,6 +445,7 @@ function wireEvents() {
 }
 
 wireEvents();
+renderSyncSettings();
 renderPrompt();
 renderTimer();
 renderAll();

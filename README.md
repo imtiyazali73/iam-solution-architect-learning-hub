@@ -12,9 +12,14 @@ A static learning website generated from an IAM Solution Architect roadmap workb
 - Interview practice prompts
 - Searchable learning resource library
 - Local progress storage in the browser
+- Optional cloud sync through a private GitHub Gist
 
 ## GitHub Pages
 
 This project is ready to publish with GitHub Pages from the repository root.
 
-Progress is stored in each browser's local storage, so progress is device-specific unless a cloud sync feature is added later.
+## Cloud Sync
+
+Cloud sync uses the GitHub Gist API from the browser. Create a GitHub token with Gist access, paste it into the Cloud Sync panel, and press **Connect**. The first push creates a private Gist and saves its ID locally. Use the same token and Gist ID on another device, then press **Pull**.
+
+Your GitHub token is stored only in that browser's local storage.

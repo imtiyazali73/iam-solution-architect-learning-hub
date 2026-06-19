@@ -165,6 +165,65 @@ main {
   padding: 28px clamp(18px, 4vw, 48px) 48px;
 }
 
+.sync-panel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 22px;
+  padding: 20px;
+}
+
+.sync-panel h2 {
+  margin-bottom: 6px;
+}
+
+.sync-panel p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+#syncStatus[data-tone="success"] {
+  color: var(--green);
+  font-weight: 800;
+}
+
+#syncStatus[data-tone="error"] {
+  color: var(--red);
+  font-weight: 800;
+}
+
+.sync-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.7fr);
+  gap: 10px;
+  align-items: end;
+}
+
+.sync-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sync-actions button {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  padding: 8px 12px;
+  font-weight: 800;
+}
+
+.sync-actions button:first-child,
+.sync-actions button:nth-child(3) {
+  border-color: transparent;
+  background: var(--blue);
+  color: #ffffff;
+}
+
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -173,6 +232,7 @@ main {
 }
 
 .metric,
+.sync-panel,
 .focus-panel,
 .roadmap-panel,
 .resource-panel {
@@ -488,6 +548,7 @@ label {
 @media (max-width: 980px) {
   .hero-grid,
   .workspace-grid,
+  .sync-panel,
   .metrics {
     grid-template-columns: 1fr;
   }
@@ -513,9 +574,14 @@ label {
   .topbar,
   .panel-heading,
   .controls,
+  .sync-controls,
   .timer {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .sync-controls {
+    display: flex;
   }
 
   .architecture-visual,
