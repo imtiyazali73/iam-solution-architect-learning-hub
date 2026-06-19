@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IAM Solution Architect Learning Hub</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <nav class="topbar" aria-label="Primary">
+        <div>
+          <p class="eyebrow">12-week roadmap</p>
+          <h1>IAM Solution Architect Learning Hub</h1>
+        </div>
+        <div class="nav-actions">
+          <button class="icon-button" id="exportProgress" type="button" title="Export progress" aria-label="Export progress">
+            <span aria-hidden="true">↓</span>
+          </button>
+          <button class="icon-button" id="resetProgress" type="button" title="Reset local progress" aria-label="Reset local progress">
+            <span aria-hidden="true">↺</span>
+          </button>
+        </div>
+      </nav>
+
+      <section class="hero-grid" aria-label="Learning summary">
+        <div class="hero-copy">
+          <p class="section-kicker">From core identity to interview readiness</p>
+          <h2>Track, focus, practice, and keep your IAM architecture learning moving.</h2>
+          <p>
+            Built from your Excel roadmap, with local progress tracking, focused weekly actions,
+            curated resources, and interview prompts.
+          </p>
+        </div>
+        <div class="architecture-visual" aria-label="IAM architecture learning map">
+          <div class="identity-node primary">Identity</div>
+          <div class="identity-node">Entra</div>
+          <div class="identity-node">IGA</div>
+          <div class="identity-node">PAM</div>
+          <div class="identity-node">Cloud IAM</div>
+          <div class="identity-node">Zero Trust</div>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="metrics" aria-label="Progress metrics">
+        <article class="metric">
+          <span>Total progress</span>
+          <strong id="overallMetric">0%</strong>
+          <div class="meter"><span id="overallBar"></span></div>
+        </article>
+        <article class="metric">
+          <span>Completed weeks</span>
+          <strong id="completedMetric">0 / 12</strong>
+          <div class="meter"><span id="completedBar"></span></div>
+        </article>
+        <article class="metric">
+          <span>Hours logged</span>
+          <strong id="hoursMetric">0 / 128</strong>
+          <div class="meter"><span id="hoursBar"></span></div>
+        </article>
+        <article class="metric">
+          <span>Current focus</span>
+          <strong id="focusMetric">Week 1</strong>
+          <p id="focusSubtext"></p>
+        </article>
+      </section>
+
+      <section class="workspace-grid">
+        <aside class="focus-panel" aria-labelledby="focusHeading">
+          <p class="section-kicker">Today</p>
+          <h2 id="focusHeading">Focus Week</h2>
+          <div id="focusCard"></div>
+          <div class="timer">
+            <div>
+              <span>Study sprint</span>
+              <strong id="timerReadout">25:00</strong>
+            </div>
+            <div class="timer-actions">
+              <button class="icon-button" id="startTimer" type="button" title="Start timer" aria-label="Start timer">▶</button>
+              <button class="icon-button" id="pauseTimer" type="button" title="Pause timer" aria-label="Pause timer">Ⅱ</button>
+              <button class="icon-button" id="resetTimer" type="button" title="Reset timer" aria-label="Reset timer">↺</button>
+            </div>
+          </div>
+          <div class="prompt-box">
+            <span>Interview prompt</span>
+            <p id="practicePrompt"></p>
+            <button id="newPrompt" type="button">New prompt</button>
+          </div>
+        </aside>
+
+        <section class="roadmap-panel" aria-labelledby="roadmapHeading">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">Roadmap</p>
+              <h2 id="roadmapHeading">Weekly plan</h2>
+            </div>
+            <div class="controls">
+              <input id="roadmapSearch" type="search" placeholder="Search topics, deliverables, phases">
+              <select id="phaseFilter" aria-label="Filter by phase">
+                <option value="All">All phases</option>
+              </select>
+            </div>
+          </div>
+          <div class="timeline" id="roadmapList"></div>
+        </section>
+      </section>
+
+      <section class="resource-panel" aria-labelledby="resourcesHeading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Library</p>
+            <h2 id="resourcesHeading">Learning resources</h2>
+          </div>
+          <input id="resourceSearch" type="search" placeholder="Search resources">
+        </div>
+        <div class="resource-list" id="resourceList"></div>
+      </section>
+    </main>
+
+    <template id="weekTemplate">
+      <article class="week-card">
+        <button class="week-main" type="button">
+          <span class="week-number"></span>
+          <span>
+            <strong class="week-title"></strong>
+            <small class="week-meta"></small>
+          </span>
+        </button>
+        <div class="week-body">
+          <p class="topics"></p>
+          <p class="deliverable"></p>
+          <div class="week-links"></div>
+          <div class="week-editors">
+            <label>Status
+              <select class="status-input">
+                <option>Not Started</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+              </select>
+            </label>
+            <label>Actual hours
+              <input class="hours-input" type="number" min="0" step="0.5">
+            </label>
+            <label>Notes
+              <textarea class="notes-input" rows="2" placeholder="Key notes, doubts, or lab ideas"></textarea>
+            </label>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
