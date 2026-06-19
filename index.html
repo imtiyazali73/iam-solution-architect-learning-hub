@@ -14,7 +14,7 @@
           <h1>IAM Solution Architect Learning Hub</h1>
         </div>
         <div class="nav-actions">
-          <button class="icon-button" id="syncNow" type="button" title="Push to cloud" aria-label="Push to cloud">
+          <button class="icon-button owner-only" id="syncNow" type="button" title="Push to cloud" aria-label="Push to cloud">
             <span aria-hidden="true">☁</span>
           </button>
           <button class="icon-button" id="exportProgress" type="button" title="Export progress" aria-label="Export progress">
@@ -47,7 +47,7 @@
     </header>
 
     <main>
-      <section class="sync-panel" aria-labelledby="syncHeading">
+      <section class="sync-panel owner-only" aria-labelledby="syncHeading">
         <div>
           <p class="section-kicker">Cloud Sync</p>
           <h2 id="syncHeading">GitHub Gist progress sync</h2>
@@ -65,6 +65,7 @@
             <button id="pullCloud" type="button">Pull</button>
             <button id="pushCloud" type="button">Push</button>
             <button id="clearSyncSettings" type="button">Clear</button>
+            <button id="hideOwnerSync" type="button">Hide sync</button>
           </div>
         </div>
       </section>

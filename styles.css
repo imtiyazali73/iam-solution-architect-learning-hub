@@ -98,6 +98,22 @@ h2 {
   gap: 10px;
 }
 
+.owner-only {
+  display: none;
+}
+
+body:not(.owner-mode) .owner-only {
+  display: none !important;
+}
+
+body.owner-mode #syncNow {
+  display: inline-grid !important;
+}
+
+body.owner-mode .sync-panel {
+  display: grid !important;
+}
+
 .icon-button {
   display: inline-grid;
   width: 42px;

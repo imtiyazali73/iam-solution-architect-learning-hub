@@ -54,6 +54,7 @@ const prompts = [
 
 const storageKey = "iam-learning-hub-progress-v1";
 const syncSettingsKey = "iam-learning-hub-sync-v1";
+const ownerModeKey = "iam-learning-hub-owner-mode-v1";
 const syncFileName = "iam-learning-progress.json";
 let state = loadState();
 let selectedWeek = findFocusWeek().week;
@@ -61,6 +62,18 @@ let timerSeconds = 25 * 60;
 let timerId = null;
 
 const $ = (selector) => document.querySelector(selector);
+
+function initializeOwnerMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("owner") === "1") {
+    localStorage.setItem(ownerModeKey, "true");
+    params.delete("owner");
+    const query = params.toString();
+    const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", cleanUrl);
+  }
+  document.body.classList.toggle("owner-mode", localStorage.getItem(ownerModeKey) === "true");
+}
 
 function loadState() {
   try {
@@ -394,6 +407,10 @@ function wireEvents() {
     localStorage.removeItem(syncSettingsKey);
     renderSyncSettings();
   });
+  $("#hideOwnerSync").addEventListener("click", () => {
+    localStorage.removeItem(ownerModeKey);
+    document.body.classList.remove("owner-mode");
+  });
   $("#pullCloud").addEventListener("click", async () => {
     try {
       await pullCloudProgress();
@@ -445,6 +462,7 @@ function wireEvents() {
   });
 }
 
+initializeOwnerMode();
 wireEvents();
 renderSyncSettings();
 renderPrompt();
